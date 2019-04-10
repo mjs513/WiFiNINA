@@ -6,7 +6,7 @@
  connect to any network, so no encryption scheme is specified.
 
  Circuit:
- * Board with NINA module (Arduino MKR WiFi 1010, MKR VIDOR 4000 and UNO WiFi Rev.2)
+ * Board with NINA firmware on it (In this case its an Adafruit AirLift)
 
  created 13 July 2010
  by dlf (Metodo2 srl)
@@ -18,6 +18,14 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 
+// Configure the pins used for the ESP32 connection
+#define SPIWIFI     SPI   // The SPI port
+#define SPIWIFI_SS    10  // Chip select pin
+#define SPIWIFI_ACK   7   // a.k.a BUSY or READY pin
+#define ESP32_RESETN  5   // Reset pin
+#define ESP32_GPIO0   -1  // Not connected
+
+
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
@@ -25,11 +33,16 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+  Serial.println("WiFi Scanning test");
+  
+  // Set up the pins!
+  WiFi.setPins(SPIWIFI_SS, SPIWIFI_ACK, ESP32_RESETN, ESP32_GPIO0, &SPIWIFI);
+
   // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE) {
+  while (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
     // don't continue
-    while (true);
+    delay(1000);
   }
 
   String fv = WiFi.firmwareVersion();
