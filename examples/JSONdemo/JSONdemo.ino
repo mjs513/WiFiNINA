@@ -14,6 +14,10 @@ last revision November 2015
 #include <WiFiNINA.h>
 #include <ArduinoJson.h>
 
+// uncomment the next line if you have a 128x32 OLED on the I2C pins
+//#define USE_OLED
+
+
 // Configure the pins used for the ESP32 connection
 #if !defined(SPIWIFI_SS)  // if the wifi definition isnt in the board variant
   // Don't change the names of these #define's! they match the variant ones
@@ -22,6 +26,11 @@ last revision November 2015
   #define SPIWIFI_ACK   7   // a.k.a BUSY or READY pin
   #define ESP32_RESETN  5   // Reset pin
   #define ESP32_GPIO0   -1  // Not connected
+#endif
+
+#if defined(USE_OLED)
+  #include <Adafruit_SSD1306.h>
+  Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 #endif
 
 #include "arduino_secrets.h" 
@@ -46,16 +55,38 @@ WiFiSSLClient client;
 void setup() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
 
+#if defined(USE_OLED)
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  display.display();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.clearDisplay();
+  display.setCursor(0,0);
+#else
+  // Don't wait for serial if we have an OLED  
+  while (!Serial) {
+    delay(10); // wait for serial port to connect. Needed for native USB port only
+  }
+#endif
+
+#if defined(USE_OLED)
+  display.print("Checking Airlift..."); display.display();
+#endif
+  
   // check for the WiFi module:
   WiFi.setPins(SPIWIFI_SS, SPIWIFI_ACK, ESP32_RESETN, ESP32_GPIO0, &SPIWIFI);
   while (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
     delay(1000);
   }
+
+#if defined(USE_OLED)
+  display.print("Found!"); display.display();
+#endif
 
   String fv = WiFi.firmwareVersion();
   if (fv < "1.0.0") {
@@ -65,12 +96,23 @@ void setup() {
   // attempt to connect to Wifi network:
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
+#if defined(USE_OLED)
+  display.clearDisplay(); display.setCursor(0,0);
+  display.print("Connecting to SSID\n"); display.println(ssid);
+  display.display();
+#endif
+
   // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
   do {
     status = WiFi.begin(ssid, pass);
     delay(100); // wait until connected
   } while (status != WL_CONNECTED);
   Serial.println("Connected to wifi");
+#if defined(USE_OLED)
+  display.print("...OK!");
+  display.display();
+#endif
+
   printWifiStatus();
 
 }
@@ -79,6 +121,12 @@ uint32_t bytes = 0;
 
 void loop() {
   Serial.println("\nStarting connection to server...");
+#if defined(USE_OLED)
+  display.clearDisplay(); display.setCursor(0,0);
+  display.print("Connecting to "); display.print(SERVER);
+  display.display();
+#endif
+
   // if you get a connection, report back via serial:
   if (client.connect(SERVER, 443)) {
     Serial.println("connected to server");
@@ -95,6 +143,10 @@ void loop() {
   if (strcmp(status, "HTTP/1.1 200 OK") != 0) {
     Serial.print(F("Unexpected response: "));
     Serial.println(status);
+#if defined(USE_OLED)
+    display.print("Connection failed, code: "); display.println(status);
+    display.display();
+#endif
     return;
   }
 
@@ -122,6 +174,15 @@ void loop() {
 
   Serial.print("Twitter username: "); Serial.println(root_0_screen_name);
   Serial.print("Twitter followers: "); Serial.println(root_0_followers_count);
+#if defined(USE_OLED)
+  display.clearDisplay(); display.setCursor(0,0);
+  display.setTextSize(2);
+  display.println(root_0_screen_name);
+  display.println(root_0_followers_count);
+  display.display();
+  display.setTextSize(1);
+#endif
+
   
   // Disconnect
   client.stop();
