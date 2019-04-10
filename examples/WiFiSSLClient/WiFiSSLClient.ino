@@ -13,6 +13,16 @@ last revision November 2015
 #include <SPI.h>
 #include <WiFiNINA.h>
 
+// Configure the pins used for the ESP32 connection
+#if !defined(SPIWIFI_SS)  // if the wifi definition isnt in the board variant
+  // Don't change the names of these #define's! they match the variant ones
+  #define SPIWIFI     SPI
+  #define SPIWIFI_SS    10  // Chip select pin
+  #define SPIWIFI_ACK   7   // a.k.a BUSY or READY pin
+  #define ESP32_RESETN  5   // Reset pin
+  #define ESP32_GPIO0   -1  // Not connected
+#endif
+
 #include "arduino_secrets.h" 
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = SECRET_SSID;        // your network SSID (name)
@@ -23,11 +33,13 @@ int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
 //IPAddress server(74,125,232,128);  // numeric IP for Google (no DNS)
-char server[] = "www.google.com";    // name address for Google (using DNS)
 
-// Initialize the Ethernet client library
+#define SERVER "cdn.syndication.twimg.com"
+#define PATH   "/widgets/followbutton/info.json?screen_names=adafruit"
+
+// Initialize the SSL client library
 // with the IP address and port of the server
-// that you want to connect to (port 80 is default for HTTP):
+// that you want to connect to (port 443 is default for HTTPS):
 WiFiSSLClient client;
 
 void setup() {
@@ -38,10 +50,10 @@ void setup() {
   }
 
   // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE) {
+  WiFi.setPins(SPIWIFI_SS, SPIWIFI_ACK, ESP32_RESETN, ESP32_GPIO0, &SPIWIFI);
+  while (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
-    // don't continue
-    while (true);
+    delay(1000);
   }
 
   String fv = WiFi.firmwareVersion();
@@ -49,30 +61,30 @@ void setup() {
     Serial.println("Please upgrade the firmware");
   }
 
-  // attempt to connect to WiFi network:
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  // attempt to connect to Wifi network:
+  Serial.print("Attempting to connect to SSID: ");
+  Serial.println(ssid);
+  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  do {
     status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
+    delay(100); // wait until connected
+  } while (status != WL_CONNECTED);
   Serial.println("Connected to wifi");
-  printWiFiStatus();
+  printWifiStatus();
 
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
-  if (client.connect(server, 443)) {
+  if (client.connect(SERVER, 443)) {
     Serial.println("connected to server");
     // Make a HTTP request:
-    client.println("GET /search?q=arduino HTTP/1.1");
-    client.println("Host: www.google.com");
+    client.println("GET " PATH " HTTP/1.1");
+    client.println("Host: " SERVER);
     client.println("Connection: close");
     client.println();
   }
 }
+
+uint32_t bytes = 0;
 
 void loop() {
   // if there are incoming bytes available
@@ -80,6 +92,7 @@ void loop() {
   while (client.available()) {
     char c = client.read();
     Serial.write(c);
+    bytes++;
   }
 
   // if the server's disconnected, stop the client:
@@ -87,6 +100,7 @@ void loop() {
     Serial.println();
     Serial.println("disconnecting from server.");
     client.stop();
+    Serial.print("Read "); Serial.print(bytes); Serial.println(" bytes");
 
     // do nothing forevermore:
     while (true);
@@ -94,7 +108,7 @@ void loop() {
 }
 
 
-void printWiFiStatus() {
+void printWifiStatus() {
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
