@@ -112,8 +112,8 @@ void SpiDrv::begin()
       delay(750);
 
       if (WIFININA_SLAVEGPIO0 >= 0) {
-	digitalWrite(WIFININA_SLAVEGPIO0, LOW);
-	pinMode(WIFININA_SLAVEGPIO0, INPUT);
+	//digitalWrite(WIFININA_SLAVEGPIO0, LOW);
+	pinMode(WIFININA_SLAVEGPIO0, INPUT_PULLUP);
       }
 
 #ifdef _DEBUG_
@@ -573,7 +573,7 @@ void SpiDrv::sendCmd(uint8_t cmd, uint8_t numParam)
 int SpiDrv::available()
 {
   if (WIFININA_SLAVEGPIO0 >= 0) {
-    return (digitalRead(WIFININA_SLAVEGPIO0) != LOW);
+    return (digitalRead(WIFININA_SLAVEGPIO0) == HIGH);
   }
   return true;
 }
