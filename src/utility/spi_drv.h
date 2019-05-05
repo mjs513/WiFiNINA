@@ -25,6 +25,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "utility/wifi_spi.h"
+#include "debug.h"
 
 #define SPI_START_CMD_DELAY 	10
 

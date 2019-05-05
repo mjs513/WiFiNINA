@@ -26,12 +26,12 @@
 #include "utility/spi_drv.h"
 #include "utility/wifi_drv.h"
 
-#define _DEBUG_
+//#define _DEBUG_
 
 extern "C" {
 #include "utility/wifi_spi.h"
 #include "utility/wl_types.h"
-#include "utility/debug.h"
+#include "debug.h"
 }
 
 // Array of data to cache the information related to the networks discovered

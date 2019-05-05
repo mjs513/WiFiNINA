@@ -23,6 +23,7 @@
 
 #include <inttypes.h>
 #include "utility/wifi_spi.h"
+#include "debug.h"
 
 typedef enum eProtMode {TCP_MODE, UDP_MODE, TLS_MODE, UDP_MULTICAST_MODE}tProtMode;
 
