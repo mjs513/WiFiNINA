@@ -19,6 +19,16 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 
+// if the wifi definition isnt in the board variant
+#if !defined(SPIWIFI_SS)
+  // Don't change the names of these #define's! they match the variant ones
+  #define SPIWIFI_SS       10
+  #define SPIWIFI_ACK       7
+  #define ESP32_RESETN      5
+  #define ESP32_GPIO0       6  // Helpful for servers
+  #define SPIWIFI          SPI
+#endif
+
 
 #include "arduino_secrets.h" 
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
@@ -28,7 +38,8 @@ int keyIndex = 0;                 // your network key Index number (needed only 
 
 int status = WL_IDLE_STATUS;
 
-WiFiServer server(80);
+int serverPort = 80;
+WiFiServer server(serverPort);
 
 void setup() {
   //Initialize serial and wait for port to open:
@@ -38,6 +49,7 @@ void setup() {
   }
 
   // check for the WiFi module:
+  WiFi.setPins(SPIWIFI_SS, SPIWIFI_ACK, ESP32_RESETN, ESP32_GPIO0, &SPIWIFI);
   if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
     // don't continue
@@ -50,18 +62,19 @@ void setup() {
   }
 
   // attempt to connect to Wifi network:
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  Serial.print("Attempting to connect to SSID: ");
+  Serial.println(ssid);
+  // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+  do {
     status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
-  server.begin();
-  // you're connected now, so print out the status:
+    delay(100);     // wait until connection is ready!
+  } while (status != WL_CONNECTED);
+  
+  Serial.println("Connected to wifi");
   printWifiStatus();
+
+  server.begin();
+  Serial.print("Listening for clients on port "); Serial.println(serverPort);
 }
 
 
@@ -69,7 +82,7 @@ void loop() {
   // listen for incoming clients
   WiFiClient client = server.available();
   if (client) {
-    Serial.println("new client");
+    Serial.println("New client");
     // an http request ends with a blank line
     boolean currentLineIsBlank = true;
     while (client.connected()) {
@@ -114,7 +127,7 @@ void loop() {
 
     // close the connection:
     client.stop();
-    Serial.println("client disonnected");
+    Serial.println("Client disconnected");
   }
 }
 
@@ -135,4 +148,3 @@ void printWifiStatus() {
   Serial.print(rssi);
   Serial.println(" dBm");
 }
-
