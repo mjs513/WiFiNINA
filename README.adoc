@@ -1,6 +1,8 @@
 = WiFiNINA Library for Arduino =
 
-image:https://travis-ci.org/arduino-libraries/WiFiNINA.svg?branch=master["Build Status", link="https://travis-ci.org/arduino-libraries/WiFiNINA"]
+image:https://travis-ci.com/adafruit/WiFiNINA.svg?branch=master["Build Status", link="https://travis-ci.com/adafruit/WiFiNINA"]
+
+**Modified to allow any pins to be used for Adafruit Airlift Boards**
 
 Enables network connection (local and Internet) with the Arduino MKR WiFi 1010, Arduino MKR VIDOR 4000 and Arduino UNO WiFi Rev.2.
 
