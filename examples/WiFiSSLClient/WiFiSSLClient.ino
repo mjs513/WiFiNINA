@@ -14,7 +14,13 @@ last revision November 2015
 #include <WiFiNINA.h>
 
 // Configure the pins used for the ESP32 connection
-#if defined(ADAFRUIT_FEATHER_M4_EXPRESS) || defined(ADAFRUIT_FEATHER_M0_EXPRESS) || defined(ARDUINO_AVR_FEATHER32U4) || defined(ARDUINO_NRF52840_FEATHER)
+#if defined(ADAFRUIT_FEATHER_M4_EXPRESS) || \
+  defined(ADAFRUIT_FEATHER_M0_EXPRESS) || \
+  defined(ARDUINO_AVR_FEATHER32U4) || \
+  defined(ARDUINO_NRF52840_FEATHER) || \
+  defined(ADAFRUIT_ITSYBITSY_M0_EXPRESS) || \
+  defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS) || \
+  defined(ARDUINO_AVR_ITSYBITSY32U4_3V)
   // Configure the pins used for the ESP32 connection
   #define SPIWIFI       SPI  // The SPI port
   #define SPIWIFI_SS    13   // Chip select pin

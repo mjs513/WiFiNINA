@@ -25,26 +25,32 @@
 #include <WiFiNINA.h>
 
 // Configure the pins used for the ESP32 connection
-#if defined(ADAFRUIT_FEATHER_M4_EXPRESS) || defined(ADAFRUIT_FEATHER_M0_EXPRESS) || defined(ARDUINO_AVR_FEATHER32U4) || defined(ARDUINO_NRF52840_FEATHER)
+#if defined(ADAFRUIT_FEATHER_M4_EXPRESS) || \
+  defined(ADAFRUIT_FEATHER_M0_EXPRESS) || \
+  defined(ARDUINO_AVR_FEATHER32U4) || \
+  defined(ARDUINO_NRF52840_FEATHER) || \
+  defined(ADAFRUIT_ITSYBITSY_M0_EXPRESS) || \
+  defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS) || \
+  defined(ARDUINO_AVR_ITSYBITSY32U4_3V)
   // Configure the pins used for the ESP32 connection
   #define SPIWIFI       SPI  // The SPI port
   #define SPIWIFI_SS    13   // Chip select pin
   #define ESP32_RESETN  12   // Reset pin
   #define SPIWIFI_ACK   11   // a.k.a BUSY or READY pin
   #define ESP32_GPIO0   -1
-#elif defined(ARDUINO_AVR_FEATHER328P) 
+#elif defined(ARDUINO_AVR_FEATHER328P)
   #define SPIWIFI       SPI  // The SPI port
   #define SPIWIFI_SS     4   // Chip select pin
   #define ESP32_RESETN   3   // Reset pin
   #define SPIWIFI_ACK    2   // a.k.a BUSY or READY pin
   #define ESP32_GPIO0   -1
-#elif defined(TEENSYDUINO) 
+#elif defined(TEENSYDUINO)
   #define SPIWIFI       SPI  // The SPI port
   #define SPIWIFI_SS     5   // Chip select pin
   #define ESP32_RESETN   6   // Reset pin
   #define SPIWIFI_ACK    9   // a.k.a BUSY or READY pin
   #define ESP32_GPIO0   -1
-#elif defined(ARDUINO_NRF52832_FEATHER )
+#elif defined(ARDUINO_NRF52832_FEATHER)
   #define SPIWIFI       SPI  // The SPI port
   #define SPIWIFI_SS    16  // Chip select pin
   #define ESP32_RESETN  15  // Reset pin
@@ -59,9 +65,7 @@
   #define ESP32_GPIO0   -1   // Not connected
 #endif
 
-
-
-#include "arduino_secrets.h" 
+#include "arduino_secrets.h"
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
@@ -109,7 +113,7 @@ void setup() {
     status = WiFi.begin(ssid, pass);
     delay(100);     // wait until connection is ready!
   } while (status != WL_CONNECTED);
-  
+
   Serial.println("Connected to wifi");
   printWifiStatus();
 
