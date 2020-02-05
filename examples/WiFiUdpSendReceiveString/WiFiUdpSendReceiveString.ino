@@ -41,11 +41,11 @@
   #define ESP32_GPIO0   -1
 #elif defined(ARDUINO_NRF52832_FEATHER )
   #define SPIWIFI       SPI  // The SPI port
-  #define SPIWIFI_SS    16  // Chip select pin
-  #define ESP32_RESETN  15  // Reset pin
-  #define SPIWIFI_ACK    7  // a.k.a BUSY or READY pin
+  #define SPIWIFI_SS    16   // Chip select pin
+  #define ESP32_RESETN  15   // Reset pin
+  #define SPIWIFI_ACK    7   // a.k.a BUSY or READY pin
   #define ESP32_GPIO0   -1
-#elif !defined(SPIWIFI_SS)  // if the wifi definition isnt in the board variant
+#elif !defined(SPIWIFI_SS)   // if the wifi definition isnt in the board variant
   // Don't change the names of these #define's! they match the variant ones
   #define SPIWIFI       SPI
   #define SPIWIFI_SS    10   // Chip select pin
