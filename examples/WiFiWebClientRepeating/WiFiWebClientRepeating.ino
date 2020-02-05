@@ -44,11 +44,11 @@
   #define ESP32_GPIO0   -1
 #elif defined(ARDUINO_NRF52832_FEATHER )
   #define SPIWIFI       SPI  // The SPI port
-  #define SPIWIFI_SS    16  // Chip select pin
-  #define ESP32_RESETN  15  // Reset pin
-  #define SPIWIFI_ACK    7  // a.k.a BUSY or READY pin
+  #define SPIWIFI_SS    16   // Chip select pin
+  #define ESP32_RESETN  15   // Reset pin
+  #define SPIWIFI_ACK    7   // a.k.a BUSY or READY pin
   #define ESP32_GPIO0   -1
-#elif !defined(SPIWIFI_SS)  // if the wifi definition isnt in the board variant
+#elif !defined(SPIWIFI_SS)   // if the wifi definition isnt in the board variant
   // Don't change the names of these #define's! they match the variant ones
   #define SPIWIFI       SPI
   #define SPIWIFI_SS    10   // Chip select pin
@@ -59,8 +59,8 @@
 
 #include "arduino_secrets.h" 
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-char ssid[] = SECRET_SSID;        // your network SSID (name)
-char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
+char ssid[] = SECRET_SSID;   // your network SSID (name)
+char pass[] = SECRET_PASS;   // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
