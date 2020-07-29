@@ -1,6 +1,6 @@
 = WiFiNINA Library for Arduino =
 
-[![Build Status](https://github.com/adafruit/WiFiNINA/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/WiFiNINA/actions)
+image:https://github.com/adafruit/WiFiNINA/workflows/Arduino%20Library%20CI/badge.svg["Build Status", link="https://github.com/adafruit/WiFiNINA/actions"]
 
 **Modified to allow any pins to be used for Adafruit Airlift Boards**
 
