@@ -20,6 +20,7 @@
 
 // Configure the pins used for the ESP32 connection
 #if defined(ADAFRUIT_FEATHER_M4_EXPRESS) || \
+  defined(ADAFRUIT_FEATHER_M0) || \
   defined(ADAFRUIT_FEATHER_M0_EXPRESS) || \
   defined(ARDUINO_AVR_FEATHER32U4) || \
   defined(ARDUINO_NRF52840_FEATHER) || \
