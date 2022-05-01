@@ -44,6 +44,12 @@ void WiFiServer::begin()
     }
 }
 
+WiFiClient WiFiServer::accept()
+{
+    int sock = ServerDrv::availServer(_sock, true);
+    return WiFiClient(sock);
+}
+
 WiFiClient WiFiServer::available(byte* status)
 {
     int sock = NO_SOCKET_AVAIL;

@@ -36,6 +36,7 @@ private:
   void*     pcb;
 public:
   WiFiServer(uint16_t);
+  WiFiClient accept();
   WiFiClient available(uint8_t* status = NULL);
   void begin();
   virtual size_t write(uint8_t);

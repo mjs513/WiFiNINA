@@ -255,21 +255,13 @@ uint16_t ServerDrv::availData(uint8_t sock)
     return len;
 }
 
-uint8_t ServerDrv::availServer(uint8_t sock)
+uint8_t ServerDrv::availServer(uint8_t sock, uint8_t accept)
 {
     if (!SpiDrv::available()) {
         return 255;
     }
 
     WAIT_FOR_SLAVE_SELECT();
-    // Send Command
-    SpiDrv::sendCmd(AVAIL_DATA_TCP_CMD, PARAM_NUMS_1);
-    SpiDrv::sendParam(&sock, sizeof(sock), LAST_PARAM);
-
-    // pad to multiple of 4
-    SpiDrv::readChar();
-    SpiDrv::readChar();
-
     SpiDrv::spiSlaveDeselect();
     //Wait the reply elaboration
     SpiDrv::waitForSlaveReady();
